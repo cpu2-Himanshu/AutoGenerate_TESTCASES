@@ -28,12 +28,12 @@ public class TokenManager {
 
         // 🔥 STORE EXACT TOKEN
         System.setProperty(TOKEN_KEY, cleanedToken);
-
+//
         // ✅ DEBUG (length will now be EXACT)
-        System.out.println(
-            "[TokenManager][SET] Token stored | value=[" +
-            cleanedToken + "] | length=" + cleanedToken.length()
-        );
+//        System.out.println(
+//            "[TokenManager][SET] Token stored | value=[" +
+//            cleanedToken + "] | length=" + cleanedToken.length()
+//        );
     }
 
     // ==============================
@@ -49,10 +49,10 @@ public class TokenManager {
             );
         }
 
-        // ✅ DEBUG (exact same value)
+     // ✅ DEBUG (print only token length)
         System.out.println(
-            "[TokenManager][GET] Token accessed | value=[" +
-            token + "] | length=" + token.length()
+            "[TokenManager][GET] Token accessed | length=" +
+            (token == null ? "null" : token.length())
         );
 
         return token;
@@ -63,6 +63,6 @@ public class TokenManager {
     // ==============================
     public static void clear() {
         System.clearProperty(TOKEN_KEY);
-        System.out.println("[TokenManager] Token cleared");
+     //   System.out.println("[TokenManager] Token cleared");
     }
 }

@@ -22,7 +22,7 @@ public class PostmanToRestAssuredGenerator {
 	// =====================================================================
 	// PUBLIC METHOD CALLED FROM UI
 	// =====================================================================
-	public static String generateTestsAndReturnXML(File postmanFile, String token) throws Exception {
+	public static String generateTestsAndReturnXML(File postmanFile) throws Exception {
 
 		// 1️⃣ Sanitize JSON file name to create valid package
 		packageName = sanitizePackageName(postmanFile.getName().replace(".json", ""));
@@ -135,39 +135,52 @@ public class PostmanToRestAssuredGenerator {
 	// =====================================================================
 	private static String generateTestNGxmlAndReturnContent() throws Exception {
 
-		StringBuilder xml = new StringBuilder();
+	    StringBuilder xml = new StringBuilder();
 
-		xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-		xml.append("<suite name=\"" + packageName + " Suite\" parallel=\"classes\" thread-count=\"5\">\n");
-		xml.append("  <test name=\"" + packageName + " Tests\">\n");
-		xml.append("    <classes>\n");
+	    xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 
-		File folder = new File(FINAL_PACKAGE_PATH);
-		File[] files = folder.listFiles((d, n) -> n.endsWith(".java"));
+	    // 🔥 FIX: REMOVE parallel + thread-count
+	    xml.append("<suite name=\"")
+	       .append(packageName)
+	       .append(" Suite\">\n");
 
-		if (files != null) {
-			for (File f : files) {
-				xml.append("      <class name=\"").append(packageName).append(".")
-						.append(f.getName().replace(".java", "")).append("\" />\n");
-			}
-		}
+	    xml.append("  <test name=\"")
+	       .append(packageName)
+	       .append(" Tests\">\n");
 
-		xml.append("    </classes>\n");
-		xml.append("  </test>\n");
-		xml.append("</suite>");
+	    xml.append("    <classes>\n");
 
-		File xmlOut = new File(packageName + ".xml");
+	    File folder = new File(FINAL_PACKAGE_PATH);
+	    File[] files = folder.listFiles((d, n) -> n.endsWith(".java"));
 
-		if (xmlOut.exists())
-			throw new Exception("❌ XML already exists: " + xmlOut.getName());
+	    if (files != null) {
+	        for (File f : files) {
+	            xml.append("      <class name=\"")
+	               .append(packageName)
+	               .append(".")
+	               .append(f.getName().replace(".java", ""))
+	               .append("\" />\n");
+	        }
+	    }
 
-		try (FileWriter fw = new FileWriter(xmlOut)) {
-			fw.write(xml.toString());
-		}
+	    xml.append("    </classes>\n");
+	    xml.append("  </test>\n");
+	    xml.append("</suite>");
 
-		latestGeneratedXML = xmlOut;
-		return xml.toString();
+	    File xmlOut = new File(packageName + ".xml");
+
+	    if (xmlOut.exists()) {
+	        throw new Exception("❌ XML already exists: " + xmlOut.getName());
+	    }
+
+	    try (FileWriter fw = new FileWriter(xmlOut)) {
+	        fw.write(xml.toString());
+	    }
+
+	    latestGeneratedXML = xmlOut;
+	    return xml.toString();
 	}
+
 
 	// =====================================================================
 	// SAFE API VALIDATION (NO EXCEPTIONS)
@@ -268,10 +281,15 @@ public class PostmanToRestAssuredGenerator {
 		sb.append("        try {\n");
 	//===================================================================
 		sb.append("            System.out.println(\"[DEBUG] Token length=\" + TokenManager.getToken().length());\n");
+//		sb.append("            response = given()\n");
+//	//	sb.append("                    .log().headers()\n"); // 🔥 ADD THIS LINE
+//		sb.append("                    .contentType(ContentType.JSON)\n");
+//		sb.append("                    .header(\"Authorization\", TokenManager.getToken())\n");
+
 		sb.append("            response = given()\n");
-		sb.append("                    .log().headers()\n"); // 🔥 ADD THIS LINE
 		sb.append("                    .contentType(ContentType.JSON)\n");
 		sb.append("                    .header(\"Authorization\", TokenManager.getToken())\n");
+
 		//===================================================================
 
 		
