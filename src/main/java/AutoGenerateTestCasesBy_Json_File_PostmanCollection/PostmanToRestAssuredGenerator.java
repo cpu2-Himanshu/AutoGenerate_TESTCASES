@@ -18,37 +18,46 @@ public class PostmanToRestAssuredGenerator {
 
 	// Final directory for generated files
 	public static String FINAL_PACKAGE_PATH = "";
+	// 🔥 SINGLE SOURCE OF TRUTH
+	public static String CLEAN_JSON_NAME = "";
+
 
 	// =====================================================================
 	// PUBLIC METHOD CALLED FROM UI
 	// =====================================================================
-	public static String generateTestsAndReturnXML(File postmanFile) throws Exception {
+	public static String generateTestsAndReturnXML(
+	        File postmanFile,
+	        String originalJsonName
+	) throws Exception {
 
-		// 1️⃣ Sanitize JSON file name to create valid package
-		packageName = sanitizePackageName(postmanFile.getName().replace(".json", ""));
-		FINAL_PACKAGE_PATH = "src/test/java/" + packageName + "/";
+	    // 🔥 ORIGINAL JSON NAME ONLY
+	    CLEAN_JSON_NAME = originalJsonName.replace(".json", "");
+	    packageName = sanitizePackageName(CLEAN_JSON_NAME);
 
-		// 2️⃣ Check duplicate (package folder or XML already exists)
-		File expectedXml = new File(packageName + ".xml");
-		File expectedPackage = new File(FINAL_PACKAGE_PATH);
+	    FINAL_PACKAGE_PATH = "src/test/java/" + packageName + "/";
 
-		if (expectedXml.exists() || expectedPackage.exists()) {
-			throw new Exception("❌ Cannot regenerate. Existing package or XML found:\n" + "Package exists: "
-					+ expectedPackage.exists() + "\n" + "XML exists: " + expectedXml.exists());
-		}
+	    File expectedXml = new File(packageName + ".xml");
+	    File expectedPackage = new File(FINAL_PACKAGE_PATH);
 
-		// Reset counters
-		apiSignatureSet.clear();
-		generatedClassCount = 0;
-		latestGeneratedXML = null;
+	    if (expectedXml.exists() || expectedPackage.exists()) {
+	        throw new Exception(
+	                "❌ Cannot regenerate.\n" +
+	                "Package exists: " + expectedPackage.getAbsolutePath() + "\n" +
+	                "XML exists: " + expectedXml.getAbsolutePath()
+	        );
+	    }
 
-		// 3️⃣ Generate Java test classes
-		generateTests(postmanFile);
+	    apiSignatureSet.clear();
+	    generatedClassCount = 0;
+	    latestGeneratedXML = null;
 
-		// 4️⃣ Create XML
-		String xml = generateTestNGxmlAndReturnContent();
+	    generateTests(postmanFile);
 
-		return xml;
+	    return generateTestNGxmlAndReturnContent(
+	            originalJsonName.replace(".json", "")
+	    );
+
+
 	}
 
 	// =====================================================================
@@ -133,13 +142,16 @@ public class PostmanToRestAssuredGenerator {
 	// =====================================================================
 	// XML GENERATOR (JSON name = XML name)
 	// =====================================================================
-	private static String generateTestNGxmlAndReturnContent() throws Exception {
+	private static String generateTestNGxmlAndReturnContent(String cleanJsonName)
+	        throws Exception {
+
+	    // 🔒 FORCE package name from uploaded JSON
+	    packageName = sanitizePackageName(cleanJsonName);
 
 	    StringBuilder xml = new StringBuilder();
 
 	    xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 
-	    // 🔥 FIX: REMOVE parallel + thread-count
 	    xml.append("<suite name=\"")
 	       .append(packageName)
 	       .append(" Suite\">\n");
@@ -248,7 +260,7 @@ public class PostmanToRestAssuredGenerator {
 				+ "import com.aventstack.extentreports.ExtentTest;\n"
 				+ "import AutoGenerateTestCasesBy_Json_File_PostmanCollection.*;\n\n"
 				+ "@Listeners(ExtentLiistener.class)\n" + "public class " + className
-				+ " extends StatusCodeClass implements TokenNs_vERIFICATIONN {\n\n" + "    private Response response;\n"
+				+ " extends StatusCodeClass  {\n\n" + "    private Response response;\n"
 				+ "    private ExtentTest test;\n\n";
 	}
 
@@ -257,63 +269,63 @@ public class PostmanToRestAssuredGenerator {
 	// =====================================================================
 	private static String generateTestMethod(JsonNode item, int priority) {
 
-		String apiName = sanitizeClassName(item.get("name").asText());
-		JsonNode request = item.get("request");
+	    String apiName = sanitizeClassName(item.get("name").asText());
+	    JsonNode request = item.get("request");
 
-		String method = request.get("method").asText();
-		String url = extractUrl(request.get("url"));
+	    String method = request.get("method").asText();
+	    String url = extractUrl(request.get("url"));
 
-		String body = "";
-		if (request.has("body") && request.get("body").has("raw"))
-			body = request.get("body").get("raw").asText().replace("\"", "\\\"");
+	    String payload = "";
+	    if (request.has("body") && request.get("body").has("raw")) {
+	        payload = request.get("body").get("raw").asText()
+	                .replace("\\", "\\\\")
+	                .replace("\"", "\\\"");
+	    }
 
-		String apiKey = extractApiKey(request);
+	    String apiKey = extractApiKey(request);
 
-		boolean hasBody = !body.isEmpty();
+	    StringBuilder sb = new StringBuilder();
 
-		StringBuilder sb = new StringBuilder();
+	    sb.append("    @Test(priority=").append(priority).append(")\n");
+	    sb.append("    public void ").append(apiName).append("() {\n");
+	    sb.append("        test = ExtentLiistener.getTest();\n");
+	    sb.append("        RestAssured.baseURI = BASE_URI;\n\n");
 
-		sb.append("    @Test(priority=" + priority + ")\n");
-		sb.append("    public void " + apiName + "() {\n");
-		sb.append("        test = ExtentLiistener.getTest();\n");
-		sb.append("        RestAssured.baseURI = BASE_URI;\n\n");
+	    // 🔥 PAYLOAD VARIABLE + LOGGING
+	    sb.append("        String Payload = \"").append(payload).append("\";\n");
+	    sb.append("        StatusCodeClass.logPayload(test, Payload);\n\n");
 
-		sb.append("        try {\n");
-	//===================================================================
-		sb.append("            System.out.println(\"[DEBUG] Token length=\" + TokenManager.getToken().length());\n");
-//		sb.append("            response = given()\n");
-//	//	sb.append("                    .log().headers()\n"); // 🔥 ADD THIS LINE
-//		sb.append("                    .contentType(ContentType.JSON)\n");
-//		sb.append("                    .header(\"Authorization\", TokenManager.getToken())\n");
+	    sb.append("        try {\n");
+	    sb.append("            response = given()\n");
+	    sb.append("                    .contentType(ContentType.JSON)\n");
+	    sb.append("                    .header(\"Authorization\", TokenManager.getToken())\n");
 
-		sb.append("            response = given()\n");
-		sb.append("                    .contentType(ContentType.JSON)\n");
-		sb.append("                    .header(\"Authorization\", TokenManager.getToken())\n");
+	    if (apiKey != null) {
+	        sb.append("                    .header(\"apikey\", \"").append(apiKey).append("\")\n");
+	    }
 
-		//===================================================================
+	    if (!payload.isEmpty()) {
+	        sb.append("                    .body(Payload)\n");
+	    }
 
-		
-		if (apiKey != null)
-			sb.append("                    .header(\"apikey\", \"" + apiKey + "\")\n");
+	    sb.append("                    .when().")
+	      .append(method.toLowerCase())
+	      .append("(\"").append(url).append("\")\n");
+	    sb.append("                    .then().extract().response();\n\n");
 
-		if (hasBody)
-			sb.append("                    .body(\"" + body + "\")\n");
+	    sb.append("            StatusCodeClass.validateStatusCode(response, test);\n");
+	    sb.append("            StatusCodeClass.validateAuth(response, test);\n");
+	    sb.append("            StatusCodeClass.validateResponseTime(response, test);\n");
 
-		sb.append("                    .when()." + method.toLowerCase() + "(\"" + url + "\")\n");
-		sb.append("                    .then().extract().response();\n");
+	    sb.append("        } catch (Exception e) {\n");
+	    sb.append("            Assert.fail(\"API Failed: ").append(apiName).append("\");\n");
+	    sb.append("        }\n");
 
-		sb.append("            StatusCodeClass.validateStatusCode(response, test);\n");
-		sb.append("            StatusCodeClass.validateAuth(response, test);\n");
-		sb.append("            StatusCodeClass.validateResponseTime(response, test);\n");
+	    sb.append("    }\n\n");
 
-		sb.append("        } catch (Exception e) {\n");
-		sb.append("            Assert.fail(\"API Failed: " + apiName + "\");\n");
-		sb.append("        }\n");
-
-		sb.append("    }\n\n");
-
-		return sb.toString();
+	    return sb.toString();
 	}
+
 
 	// =====================================================================
 	// UTILITIES

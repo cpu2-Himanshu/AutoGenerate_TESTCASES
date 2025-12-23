@@ -66,20 +66,43 @@ public class GeneratorController {
                         .body(Map.of("error", "No file uploaded"));
             }
 
-            File tempJson = File.createTempFile("postman-", ".json");
+            // =========================================================
+            // ORIGINAL FILE NAME (SOURCE OF TRUTH)
+            // =========================================================
+            String originalName = file.getOriginalFilename();
+
+            if (originalName == null || !originalName.endsWith(".json")) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "Invalid JSON file"));
+            }
+
+            // sanitize ONCE
+            String baseName = originalName.replace(".json", "");
+            String safeName = baseName.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+
+            // =========================================================
+            // TEMP FILE (CONTENT ONLY)
+            // =========================================================
+            File tempJson = File.createTempFile("upload-", ".json");
             file.transferTo(tempJson);
 
-            // 🚫 TOKEN MUST NOT BE USED HERE
+            // =========================================================
+            // GENERATE
+            // =========================================================
             String xmlText =
                     PostmanToRestAssuredGenerator
-                            .generateTestsAndReturnXML(tempJson);
+                            .generateTestsAndReturnXML(tempJson, originalName);
 
             File latest =
                     PostmanToRestAssuredGenerator.latestGeneratedXML;
 
+            // =========================================================
+            // 🔥 RETURN CLEAN NAMES TO UI
+            // =========================================================
             return ResponseEntity.ok(Map.of(
                     "xml", xmlText,
-                    "name", latest.getName(),
+                    "name", safeName + ".xml",     // ✅ JSON-based name
+                    "package", safeName,           // ✅ package name
                     "path", latest.getAbsolutePath()
             ));
 
@@ -90,61 +113,6 @@ public class GeneratorController {
         }
     }
 
-    // =====================================================
-    // 4) LIST XML SUITES
-    // =====================================================
-    @GetMapping(value = "/xml-suites",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<String>> listXmlSuites() {
-
-        List<String> names = getXmlFiles()
-                .stream()
-                .map(File::getName)
-                .toList();
-
-        return ResponseEntity.ok(names);
-    }
-
-    // =====================================================
-    // 5) OPEN XML SUITE
-    // =====================================================
-    @GetMapping(value = "/xml-suites/{name}",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, Object>> openXmlSuite(
-            @PathVariable String name) {
-
-        File selected = getXmlFiles().stream()
-                .filter(f -> f.getName().equals(name))
-                .findFirst()
-                .orElse(null);
-
-        if (selected == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "XML not found"));
-        }
-
-        try {
-            PostmanToRestAssuredGenerator.latestGeneratedXML = selected;
-
-            String xml = Files.readString(selected.toPath());
-
-            List<String> classes = new ArrayList<>();
-            Matcher m = Pattern.compile("<class\\s+name=\"(.*?)\"").matcher(xml);
-            while (m.find()) classes.add(m.group(1));
-
-            return ResponseEntity.ok(Map.of(
-                    "name", selected.getName(),
-                    "path", selected.getAbsolutePath(),
-                    "totalClasses", classes.size(),
-                    "classes", classes,
-                    "xml", xml
-            ));
-
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError()
-                    .body(Map.of("error", e.getMessage()));
-        }
-    }
 
     // =====================================================
     // 6) RUN TESTNG SUITE (✅ TOKEN SET ONLY HERE)
@@ -214,6 +182,63 @@ public class GeneratorController {
             Thread.currentThread().setContextClassLoader(originalCL);
         }
     }
+    
+ // =====================================================
+    // 7) LIST XML SUITES (OPEN XML)
+    // =====================================================
+    @GetMapping(value = "/xml-suites",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> listXmlSuites() {
+
+        List<String> names = getXmlFiles()
+                .stream()
+                .map(File::getName)
+                .toList();
+
+        return ResponseEntity.ok(names);
+    }
+ // =====================================================
+ // 8) OPEN SELECTED XML
+ // =====================================================
+    @GetMapping(value = "/xml-suites/{name}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map<String, Object>> openXmlSuite(
+            @PathVariable String name) {
+
+        File selected = getXmlFiles().stream()
+                .filter(f -> f.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+
+        if (selected == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "XML not found"));
+        }
+
+        try {
+            // 🔥 VERY IMPORTANT: SET ACTIVE XML
+            PostmanToRestAssuredGenerator.latestGeneratedXML = selected;
+
+            String xml = Files.readString(selected.toPath());
+
+            List<String> classes = new ArrayList<>();
+            Matcher m = Pattern.compile("<class\\s+name=\"(.*?)\"").matcher(xml);
+            while (m.find()) classes.add(m.group(1));
+
+            return ResponseEntity.ok(Map.of(
+                    "name", selected.getName(),
+                    "path", selected.getAbsolutePath(),
+                    "totalClasses", classes.size(),
+                    "classes", classes,
+                    "xml", xml
+            ));
+
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
 
     // =====================================================
     // HELPERS
@@ -224,4 +249,6 @@ public class GeneratorController {
                 (d, n) -> n.endsWith(".xml") && !n.startsWith("testng"));
         return files == null ? List.of() : List.of(files);
     }
+    
+ 
 }

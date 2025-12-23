@@ -559,9 +559,9 @@
 
 <script>
   // ===== API URL Helper (ONLY ONCE) =====
-  const DEFAULT_API = "http://localhost:8081"; // fallback if opened via file://
+  const DEFAULT_API = "http://localhost:8091"; // fallback if opened via file://
   const API_BASE = (() => {
-    // optional override: ?api=http://localhost:8081
+    // optional override: ?api=http://localhost:8091
     const api = new URLSearchParams(window.location.search).get("api");
     let base = (api ? api : window.location.origin);
 

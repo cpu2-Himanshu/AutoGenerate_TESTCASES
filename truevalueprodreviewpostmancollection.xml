@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="truevalueprodreviewpostmancollection Suite">
+  <test name="truevalueprodreviewpostmancollection Tests">
+    <classes>
+      <class name="truevalueprodreviewpostmancollection.customerDetails_Tests" />
+      <class name="truevalueprodreviewpostmancollection.document_operations_Tests" />
+      <class name="truevalueprodreviewpostmancollection.getchecklist_Tests" />
+      <class name="truevalueprodreviewpostmancollection.getCustomerSvoc_Tests" />
+      <class name="truevalueprodreviewpostmancollection.getfilter_Tests" />
+      <class name="truevalueprodreviewpostmancollection.gettvmbuyinglist_Tests" />
+      <class name="truevalueprodreviewpostmancollection.LISTING_PAGE_Tests" />
+      <class name="truevalueprodreviewpostmancollection.New_Folder_Tests" />
+      <class name="truevalueprodreviewpostmancollection.vahaninfo_Tests" />
+    </classes>
+  </test>
+</suite>

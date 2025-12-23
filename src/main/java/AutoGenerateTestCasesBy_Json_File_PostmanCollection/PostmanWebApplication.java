@@ -16,11 +16,12 @@ public class PostmanWebApplication {
 
     @EventListener(ApplicationReadyEvent.class)
     public void openBrowser() {
-        try {
-            String url = "http://localhost:8085/postman-generator-ui.html";
+    
+    	try {
+            String url = "http://localhost:8091/postman-generator-ui.html";
             new ProcessBuilder("cmd", "/c", "start", url).start();
         } catch (Exception e) {
-            System.out.println("Open manually: http://localhost:8085/postman-generator-ui.html");
+            System.out.println("Open manually: http://localhost:8091/postman-generator-ui.html");
         }
     }
 }
