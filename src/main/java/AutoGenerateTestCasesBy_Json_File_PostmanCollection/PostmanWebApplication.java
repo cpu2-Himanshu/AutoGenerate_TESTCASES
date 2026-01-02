@@ -24,6 +24,8 @@ public class PostmanWebApplication {
             new ProcessBuilder("cmd", "/c", "start", url).start();
         } catch (Exception e) {
             System.out.println("Open manually: http://localhost:8097/postman-generator-ui.html");
+            System.out.println("Open manually: http://localhost:8097/postman-generator-ui.html");
+
         }
     }
     
