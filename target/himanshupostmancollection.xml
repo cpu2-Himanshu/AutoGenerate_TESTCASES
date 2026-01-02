@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="himanshupostmancollection Suite">
+  <test name="himanshupostmancollection Tests">
+    <classes>
+      <class name="himanshupostmancollection.ONE_Tests" />
+      <class name="himanshupostmancollection.THREE_Tests" />
+      <class name="himanshupostmancollection.TWO_Tests" />
+    </classes>
+  </test>
+</suite>

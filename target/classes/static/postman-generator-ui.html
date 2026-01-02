@@ -24,54 +24,52 @@
       --text-secondary: #9ca3af;
       --chip-bg: rgba(15, 23, 42, 0.9);
     }
-    
+
+    * {
+      box-sizing: border-box;
+    }
+
     .ranjan-logo-img {
-  height: 50px;          /* 🔽 smaller size */
-  width: auto;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.7));
-}
-    
-    
+      height: 50px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.7));
+    }
+
     .brand-name {
-  color: #facc15;        /* Dark yellow (premium) */
-  font-weight: 900;      /* Extra bold */
-  font-size: 18px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
+      color: #facc15;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-shadow:
+        0 1px 0 #000,
+        0 2px 4px rgba(0,0,0,0.8);
+    }
 
-  /* Dark + strong look */
-  text-shadow:
-    0 1px 0 #000,
-    0 2px 4px rgba(0,0,0,0.8);
-}
-    
-
-    * { box-sizing: border-box; }
-
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
-      height: 100%;
+      min-height: 100%;
       font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text-primary);
       background:
         radial-gradient(circle at top left, rgba(249, 115, 22, 0.21), transparent 55%),
         radial-gradient(circle at top right, rgba(59, 130, 246, 0.26), transparent 55%),
         radial-gradient(circle at bottom, rgba(8, 47, 73, 0.85), #020617);
-      background-attachment: fixed;
+      /* background-attachment: fixed;  <-- removed to avoid mobile scroll issues */
     }
 
     body {
-      display: flex;
-      align-items: stretch;
-      justify-content: center;
+      /* No flex here -> page can scroll normally */
       padding: 16px;
     }
 
     .app-shell {
       width: 100%;
-      max-width: 1280px;
+      max-width: 1100px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
       border-radius: 24px;
@@ -85,21 +83,17 @@
     }
 
     .app-header {
-  position: relative;
-  padding: 18px 24px 16px;
-
-  /* 🔥 Orange → Blue smooth gradient */
-  background: linear-gradient(
-    90deg,
-    #b45309 0%,
-    #c2410c 18%,
-    #1e3a8a 55%,
-    #1d4ed8 100%
-  );
-
-  border-bottom: 1px solid rgba(30, 64, 175, 0.8);
-}
-
+      position: relative;
+     padding: 14px 20px 12px;
+      background: linear-gradient(
+        90deg,
+        #b45309 0%,
+        #c2410c 18%,
+        #1e3a8a 55%,
+        #1d4ed8 100%
+      );
+      border-bottom: 1px solid rgba(30, 64, 175, 0.8);
+    }
 
     .app-header-top {
       display: flex;
@@ -120,18 +114,27 @@
       color: var(--text-secondary);
     }
 
-    .logo-pill span.icon { font-size: 0.95rem; }
+    .logo-pill span.icon {
+      font-size: 0.95rem;
+    }
 
-    .title-block { display: flex; flex-direction: column; gap: 2px; }
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
 
     .title-main {
-      font-size: 1.3rem;
+       font-size: 1.15rem;
       font-weight: 650;
       letter-spacing: 0.01em;
       color: #f9fafb;
     }
 
-    .title-sub { font-size: 0.8rem; color: rgba(226, 232, 240, 0.85); }
+    .title-sub {
+      font-size: 0.8rem;
+      color: rgba(226, 232, 240, 0.85);
+    }
 
     .header-meta {
       display: flex;
@@ -141,6 +144,7 @@
       justify-content: flex-end;
       font-size: 0.75rem;
       color: var(--text-secondary);
+      flex-wrap: wrap;
     }
 
     .meta-chip {
@@ -165,13 +169,41 @@
       grid-template-columns: minmax(0, 5fr) minmax(0, 3.5fr);
       gap: 0;
       padding: 0;
-      min-height: 520px;
     }
 
-    @media (max-width: 960px) { .app-body { grid-template-columns: minmax(0, 1fr); } }
+    @media (max-width: 960px) {
+      body {
+        padding: 10px;
+      }
 
-    .left-pane, .right-pane { padding: 18px 20px 20px; }
-    .left-pane { border-right: 1px solid rgba(30, 64, 175, 0.65); }
+      .app-shell {
+        border-radius: 18px;
+      }
+
+      .app-header {
+        padding: 14px 16px;
+      }
+
+      .app-body {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .left-pane,
+    .right-pane {
+      padding: 14px 16px 16px; 
+    }
+
+    .left-pane {
+      border-right: 1px solid rgba(30, 64, 175, 0.65);
+    }
+
+    @media (max-width: 960px) {
+      .left-pane {
+        border-right: none;
+        border-bottom: 1px solid rgba(30, 64, 175, 0.65);
+      }
+    }
 
     .section-label {
       font-size: 0.75rem;
@@ -184,9 +216,10 @@
     .control-card {
       border-radius: 16px;
       border: 1px solid var(--border-subtle);
-      background: radial-gradient(circle at top left, rgba(249, 115, 22, 0.09), transparent 55%),
-                  radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.12), transparent 55%),
-                  linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.98));
+      background:
+        radial-gradient(circle at top left, rgba(249, 115, 22, 0.09), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.12), transparent 55%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(15, 23, 42, 0.98));
       padding: 14px 14px 12px;
       display: flex;
       flex-direction: column;
@@ -194,15 +227,27 @@
       margin-bottom: 14px;
     }
 
-    .control-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
 
-    .token-input { flex: 1.8; min-width: 220px; position: relative; }
+    .token-input {
+      flex: 1.8;
+      min-width: 220px;
+      position: relative;
+    }
+
     .token-input label {
       display: block;
       font-size: 0.72rem;
       text-transform: uppercase;
       letter-spacing: 0.16em;
-      color: var(--text-secondary);
+      color: #eab308;
+      font-weight: 900;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
       margin-bottom: 3px;
     }
 
@@ -217,15 +262,12 @@
       outline: none;
     }
 
-   
-.token-input label {
-  color: #eab308;        /* Dark gold */
-  font-weight: 900;
-  letter-spacing: 0.1em;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-}
-
-    .file-input-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .file-input-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
 
     .file-display {
       flex: 1;
@@ -241,7 +283,9 @@
       text-overflow: ellipsis;
     }
 
-    .file-input { display: none; }
+    .file-input {
+      display: none;
+    }
 
     .btn {
       border-radius: 999px;
@@ -259,7 +303,9 @@
       white-space: nowrap;
     }
 
-    .btn .icon { font-size: 1rem; }
+    .btn .icon {
+      font-size: 1rem;
+    }
 
     .btn-primary {
       background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
@@ -294,7 +340,11 @@
       color: var(--text-primary);
     }
 
-    .btn-disabled { cursor: default; opacity: 0.45; box-shadow: none !important; }
+    .btn-disabled {
+      cursor: default;
+      opacity: 0.45;
+      box-shadow: none !important;
+    }
 
     .xml-select {
       background: var(--chip-bg);
@@ -313,16 +363,34 @@
       box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.5);
     }
 
-    .divider-hr { border: none; border-top: 1px dashed rgba(51, 65, 85, 0.9); margin: 6px 0 4px; }
+    .divider-hr {
+      border: none;
+      border-top: 1px dashed rgba(51, 65, 85, 0.9);
+      margin: 6px 0 4px;
+    }
 
-    .inline-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-start; margin-top: 4px; }
+    .inline-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-start;
+      margin-top: 4px;
+    }
 
-    .progress-shell { margin-top: 10px; display: flex; flex-direction: column; gap: 4px; font-size: 0.72rem; color: var(--text-secondary); }
+    .progress-shell {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+    }
 
     .progress-track {
       position: relative;
       width: 100%;
-      height: 8px;
+      height: 6px;
       border-radius: 999px;
       background: rgba(15, 23, 42, 0.9);
       border: 1px solid rgba(30, 64, 175, 0.7);
@@ -341,13 +409,17 @@
       transition: width 0.18s ease-out;
     }
 
-    .progress-label { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
 
     .pane-card {
       border-radius: 16px;
       border: 1px solid var(--border-subtle);
       background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.98));
-      height: calc(100% - 0px);
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -362,33 +434,90 @@
       gap: 8px;
     }
 
-    .pane-title { font-size: 0.9rem; font-weight: 600; color: #e5e7eb; }
-    .pane-subtitle { font-size: 0.72rem; color: var(--text-secondary); }
+    .pane-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
 
-    .pane-body { flex: 1; display: grid; grid-template-rows: minmax(0, 1.3fr) minmax(0, 1fr); }
+    .pane-subtitle {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+    }
 
-    .pane-section { padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
+    /* Tabs above XML / Logs (shown on mobile) */
+    .pane-tabs {
+      display: none;
+      padding: 6px 12px 0;
+      gap: 6px;
+      border-bottom: 1px solid rgba(30, 64, 175, 0.8);
+    }
 
-    .textarea-shell { position: relative; height: 100%; }
+    .pane-tab {
+      flex: 1;
+      font-size: 0.75rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-secondary);
+      padding: 6px 10px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.15s ease-out;
+    }
+
+    .pane-tab.is-active {
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
+      color: #0b1120;
+      border-color: transparent;
+      box-shadow: 0 10px 20px rgba(15,23,42,0.9);
+    }
+
+    .pane-body {
+      flex: 1;
+      display: grid;
+      grid-template-rows: minmax(0, 1.3fr) minmax(0, 1fr);
+    }
+
+    .pane-section {
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .textarea-shell {
+      position: relative;
+      height: 100%;
+    }
 
     textarea {
       width: 100%;
       height: 100%;
-      resize: none;
+      resize: vertical;
       border-radius: 12px;
       padding: 9px 11px;
       font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size: 0.76rem;
       line-height: 1.35;
       border: 1px solid rgba(30, 64, 175, 0.7);
-      background: radial-gradient(circle at top left, rgba(30, 64, 175, 0.32), transparent 55%),
-                  radial-gradient(circle at bottom right, rgba(15, 23, 42, 1), rgba(15, 23, 42, 1));
+      background:
+        radial-gradient(circle at top left, rgba(30, 64, 175, 0.32), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(15, 23, 42, 1), rgba(15, 23, 42, 1));
       color: var(--text-primary);
       outline: none;
       box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.9);
     }
 
-    textarea::placeholder { color: rgba(148, 163, 184, 0.8); }
+    textarea::placeholder {
+      color: rgba(148, 163, 184, 0.8);
+    }
 
     .log-area {
       background: radial-gradient(circle at top, rgba(15, 23, 42, 1), rgba(15, 23, 42, 1));
@@ -408,7 +537,12 @@
       background: radial-gradient(circle at bottom, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.96));
     }
 
-    .footer-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .footer-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
 
     .badge {
       border-radius: 999px;
@@ -416,6 +550,88 @@
       border: 1px solid rgba(148, 163, 184, 0.6);
       background: rgba(15, 23, 42, 0.9);
       font-size: 0.7rem;
+    }
+
+    /* ===== MOBILE / SMALL SCREENS ===== */
+    @media (max-width: 768px) {
+      .app-header-top {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-meta {
+        justify-content: flex-start;
+      }
+
+      .title-main {
+        font-size: 1.1rem;
+      }
+
+      .title-sub {
+        font-size: 0.72rem;
+      }
+
+      .left-pane,
+      .right-pane {
+        padding: 14px 14px 16px;
+      }
+
+      .control-row,
+      .file-input-row,
+      .inline-actions {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .file-display {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .btn,
+      .xml-select {
+        width: 100%;
+        justify-content: center;
+      }
+
+      /* Tabs visible on mobile */
+      .pane-tabs {
+        display: flex;
+      }
+
+      .pane-body {
+        display: block; /* We show one section at a time via JS */
+      }
+
+      .pane-section {
+        display: none; /* Hidden by default; JS adds .is-active */
+      }
+
+      .pane-section.is-active {
+        display: flex;
+      }
+
+      .textarea-shell {
+        min-height: 160px;
+      }
+
+      textarea {
+        min-height: 160px;
+      }
+
+      .footer-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .footer-actions {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .ranjan-logo-img {
+        height: 40px;
+      }
     }
   </style>
 </head>
@@ -425,20 +641,24 @@
   <!-- HEADER -->
   <header class="app-header">
     <div class="app-header-top">
-      <div class="">
-        <div class="logo-pill">
-          <span class="icon">⚡</span>
-          <span></span>
-        </div>
+      <div>
+        
         <div class="title-main">Cloud based test case generator and RUNNER</div>
         <div class="title-sub">
           JSON  → Generate Test Suite → Download Suite → Run Suite → View Report
         </div>
       </div>
 
-      <div class="header-meta">
-        <span class=""></span>
-        <span class="meta-chip">Reports: Extent 3.x</span>
+      <div class="">
+		<img
+
+		        src="https://autovyn.in/assets/img/autovyn%20logo.png"
+
+		        alt="Logo"
+
+		        class="ranjan-logo-img"
+
+		      />
       </div>
     </div>
 
@@ -464,11 +684,11 @@
           <div class="file-display" id="filePathDisplay">No Postman JSON selected</div>
 
           <button class="btn btn-secondary" id="selectFileBtn" type="button">
-            <span class="icon">📂</span><span>Upload JSON</span>
+            <span class="icon">📂</span><span>Generate Test script</span>
           </button>
 
           <button class="btn btn-ghost" id="openXmlBtn" type="button">
-            <span class="icon">📁</span><span>Open XML</span>
+            <span class="icon">📁</span><span>Select project</span>
           </button>
 
           <!-- DROPDOWN + LOAD BUTTON -->
@@ -484,7 +704,7 @@
 
         <div class="inline-actions">
           <button class="btn btn-primary btn-disabled" id="runTestsBtn" type="button">
-            <span class="icon">▶</span><span>Run XML Suite</span>
+            <span class="icon">▶</span><span>Run Test Suite</span>
           </button>
 
           <button class="btn btn-secondary btn-disabled" id="openReportBtn" type="button">
@@ -513,23 +733,27 @@
       <div class="pane-card">
         <div class="pane-header">
           <div>
-            <div class="pane-title">Generated TestNG XML</div>
-            <div class="pane-subtitle">--</div>
+            <div class="pane-title">Background Process Mirror</div>
+            
           </div>
         </div>
 
+        <!-- Tabs (visible on mobile) -->
+        <div class="pane-tabs">
+          <button class="pane-tab is-active" data-tab="xml">XML</button>
+          <button class="pane-tab" data-tab="logs">Logs</button>
+        </div>
+
         <div class="pane-body">
-          <div class="pane-section">
+          <div class="pane-section" id="xmlSection">
             <div class="textarea-shell">
               <textarea id="xmlArea" placeholder="XML suite will appear here after generating from Postman collection…" spellcheck="false"></textarea>
             </div>
           </div>
 
-          <div class="pane-section" style="border-top:1px solid rgba(15,23,42,0.9);">
+          <div class="pane-section" id="logsSection" style="border-top:1px solid rgba(15,23,42,0.9);">
             <div class="pane-header" style="padding:0 0 6px;border:none;">
-              <div class="pane-title" style="font-size:0.85rem;">Logs &amp; Execution Status</div>
-              <div class="pane-subtitle" style="font-size:0.72rem;">Generator + TestNG logs streamed from backend.</div>
-            </div>
+              <div class="pane-title" style="font-size:0.85rem;">Execution Logs & Status</div>            </div>
             <div class="textarea-shell" style="height:100%;">
               <textarea id="logArea" class="log-area" placeholder="Logs will appear here..." spellcheck="false"></textarea>
             </div>
@@ -539,29 +763,14 @@
     </div>
   </div>
 
- <!-- FOOTER -->
-<footer class="footer-bar">
-  <div>
-    <span class="badge">Tip</span>
-    <span>Upload Postman JSON → Generate TestNG XML → Run Suite → Open Extent Report</span>
-  </div>
 
-  <div class="footer-actions">
-  <img
-    src="https://autovyn.in/assets/img/autovyn%20logo.png"
-    alt="Logo"
-    class="ranjan-logo-img"
-  />
 </div>
-</footer>
-
-
 
 <script>
   // ===== API URL Helper (ONLY ONCE) =====
-  const DEFAULT_API = "http://localhost:8091"; // fallback if opened via file://
+  const DEFAULT_API = "http://localhost:8097"; // fallback if opened via file://
   const API_BASE = (() => {
-    // optional override: ?api=http://localhost:8091
+    // optional override: ?api=http://localhost:8097
     const api = new URLSearchParams(window.location.search).get("api");
     let base = (api ? api : window.location.origin);
 
@@ -599,6 +808,10 @@
   const progressPercent = document.getElementById("progressPercent");
   const bigTimerLabel   = document.getElementById("bigTimerLabel");
 
+  const xmlSection      = document.getElementById("xmlSection");
+  const logsSection     = document.getElementById("logsSection");
+  const paneTabs        = document.querySelectorAll(".pane-tab");
+
   let latestXmlLoaded   = false;
   let timerInterval     = null;
   let timerStartMs      = 0;
@@ -628,18 +841,21 @@
   }
 
   function stopTimer(finalLabel) {
-    if (timerInterval) {
-      clearInterval(timerInterval);
-      timerInterval = null;
-    }
-    if (finalLabel) bigTimerLabel.textContent = finalLabel;
-    setTimeout(() => { bigTimerLabel.style.display = "none"; }, 3500);
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
   }
+
+  if (finalLabel) {
+    bigTimerLabel.textContent = finalLabel;
+  }
+}
+
 
   function resetUI() {
     tokenInput.value = "";
     fileInput.value = "";
-    filePathDisplay.textContent = "No Postman JSON selected";
+    filePathDisplay.textContent = "*Please select only .json file to proceed";
     xmlArea.value = "";
     logArea.value = "";
     latestXmlLoaded = false;
@@ -666,11 +882,6 @@
     log("📄 Selected JSON: " + file.name);
 
     const token = tokenInput.value.trim();
-    if (!token) {
-      alert("Please enter Authorization Token before generating XML.");
-      log("⚠ Token missing; generation blocked.");
-      return;
-    }
 
     const formData = new FormData();
     formData.append("file", file);
@@ -783,58 +994,116 @@
     }
   }
 
-  async function handleRunTests() {
-    if (runTestsBtn.classList.contains("btn-disabled")) return;
+ 
+ 
+ async function handleRunTests() {
+  if (runTestsBtn.classList.contains("btn-disabled")) return;
 
-    const token = tokenInput.value.trim();
-    if (!token) {
-      alert("Please enter Authorization Token before running tests.");
-      log("❌ Token missing for run.");
+  const token = tokenInput.value.trim();
+  if (!token) {
+    alert("Please enter Authorization Token before running tests.");
+    log("❌ Token missing for run.");
+    return;
+  }
+
+  try {
+    setProgress(20, "Triggering TestNG suite...");
+    startTimer("⏱ Test Execution:");
+    log("▶ Running test suite...");
+
+    const resp = await fetch(apiUrl("/api/run-suite"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token })
+    });
+
+    const data = await resp.json().catch(() => ({}));
+
+    if (!resp.ok) {
+      const msg = data.error || resp.statusText;
+      log("❌ TestNG execution error: " + msg);
+      alert("Error running suite: " + msg);
+      setProgress(0, "Execution failed");
+      stopTimer("❌ Execution failed");
       return;
     }
 
-    try {
-      setProgress(20, "Triggering TestNG suite...");
-      startTimer("⏱ Test Execution:");
+    setProgress(100, "Execution completed");
+    log("✔ Execution completed.");
 
-      const resp = await fetch(apiUrl("/api/run-suite"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token })
-      });
+    // 🔔 Alert first
+    alert("🎉 ALL TEST CASES FINISHED SUCCESSFULLY 🎉");
 
-      const data = await resp.json().catch(() => ({}));
-
-      if (!resp.ok) {
-        const msg = data.error || resp.statusText;
-        log("❌ TestNG execution error: " + msg);
-        alert("Error running suite: " + msg);
-        setProgress(0, "Execution failed");
-        stopTimer("❌ Execution failed");
-        return;
-      }
-
-      setProgress(100, "Execution completed");
-      log("✔ Execution completed. " + (data.summary || ""));
-      stopTimer("🏁 Finished");
-
-      openReportBtn.classList.remove("btn-disabled");
-      alert("🎉 ALL TEST CASES FINISHED SUCCESSFULLY 🎉");
-    } catch (err) {
-      console.error(err);
-      log("❌ Error running suite: " + err.message);
-      setProgress(0, "Execution failed");
-      stopTimer("❌ Execution failed");
+    // 📊 Summary AFTER OK
+    if (
+      data.total !== undefined &&
+      data.passed !== undefined &&
+      data.failed !== undefined &&
+      data.skipped !== undefined
+    ) {
+      log("--------------------------------");
+      log("📊 Test Execution Summary");
+      log("--------------------------------");
+      log("✔ Passed  : " + data.passed);
+      log("❌ Failed  : " + data.failed);
+      log("⏭ Skipped : " + data.skipped);
+      log("📦 Total   : " + data.total);
+      log("--------------------------------");
     }
+
+    stopTimer("🏁 Finished");
+    openReportBtn.classList.remove("btn-disabled");
+
+  } catch (err) {
+    console.error(err);
+    log("❌ Error running suite: " + err.message);
+    setProgress(0, "Execution failed");
+    stopTimer("❌ Execution failed");
+  }
+}
+ 
+ 
+ 
+
+  function handleOpenReport() {
+    if (openReportBtn.classList.contains("btn-disabled")) return;
+    window.open(apiUrl("/api/report"), "_blank");
   }
 
- function handleOpenReport() {
-  if (openReportBtn.classList.contains("btn-disabled")) return;
+  // ===== XML / LOGS TABS (for mobile) =====
+  function applyTabLayout() {
+    const isMobile = window.innerWidth <= 768;
 
-  window.open(apiUrl("/api/report"), "_blank");
-}
+    if (!isMobile) {
+      // Desktop: show both sections
+      xmlSection.classList.remove("is-active");
+      logsSection.classList.remove("is-active");
+      xmlSection.style.display = "";
+      logsSection.style.display = "";
+      return;
+    }
 
+    const activeBtn = document.querySelector(".pane-tab.is-active") || paneTabs[0];
 
+    paneTabs.forEach(btn => {
+      const target = btn.dataset.tab === "xml" ? xmlSection : logsSection;
+      if (btn === activeBtn) {
+        target.classList.add("is-active");
+      } else {
+        target.classList.remove("is-active");
+      }
+    });
+  }
+
+  paneTabs.forEach(btn => {
+    btn.addEventListener("click", () => {
+      paneTabs.forEach(b => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      applyTabLayout();
+    });
+  });
+
+  window.addEventListener("resize", applyTabLayout);
 
   // ===== EVENTS =====
   selectFileBtn.addEventListener("click", () => fileInput.click());
@@ -849,8 +1118,8 @@
 
   // ===== INIT =====
   resetUI();
+  applyTabLayout();
 </script>
-
 
 </body>
 </html>
